@@ -1,5 +1,6 @@
 package com.edu.utez.controller;
 
+import com.edu.utez.model.categorys.CategoryDao;
 import com.edu.utez.model.movies.Movie;
 import com.edu.utez.model.movies.MovieDao;
 
@@ -29,7 +30,7 @@ public class MoviesController {
     @Path("/save")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes("application/x-www-form-urlencoded")
-    public Movie saveMovie(MultivaluedMap<String, String> formParams) {
+    public Object saveMovie(MultivaluedMap<String, String> formParams) {
         if (new MovieDao().saveMovie(getParamsMovies(0, formParams), true)){
             return new MovieDao().findLast();
         }else{
@@ -41,9 +42,10 @@ public class MoviesController {
     @Path("/save/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes("application/x-www-form-urlencoded")
-    public Movie saveMovie(@PathParam("id") int id, MultivaluedMap<String, String> formParams) {
+    public Object saveMovie(@PathParam("id") int id, MultivaluedMap<String, String> formParams) {
         if (new MovieDao().saveMovie(getParamsMovies(id, formParams), false)){
-            return new MovieDao().findByMovieId(id);
+            Object res = new Object[]{new CategoryDao().findByCategoryId(id), "Se actualizo correctamente la película"};
+            return res;
         }else{
             return null;
         }
@@ -52,7 +54,7 @@ public class MoviesController {
     @POST
     @Path("/delete/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public boolean deleteMovie(@PathParam("id") int id) {
+    public String deleteMovie(@PathParam("id") int id) {
         return new MovieDao().deleteMovie(id);
     }
 

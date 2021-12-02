@@ -9,7 +9,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import java.util.List;
 
 @Path("/categorys")
-public class Service {
+public class CategorysController {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -28,7 +28,7 @@ public class Service {
     @Path("/save")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes("application/x-www-form-urlencoded")
-    public Category saveCategory(MultivaluedMap<String, String> formParams) {
+    public Object saveCategory(MultivaluedMap<String, String> formParams) {
         if (new CategoryDao().saveCategory(getParamsCategorys(0, formParams), true)){
             return new CategoryDao().findLast();
         }else{
@@ -40,9 +40,10 @@ public class Service {
     @Path("/save/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes("application/x-www-form-urlencoded")
-    public Category saveCategory(@PathParam("id") int id, MultivaluedMap<String, String> formParams) {
+    public Object saveCategory(@PathParam("id") int id, MultivaluedMap<String, String> formParams) {
         if (new CategoryDao().saveCategory(getParamsCategorys(id, formParams), false)){
-            return new CategoryDao().findByCategoryId(id);
+            Object res = new Object[]{new CategoryDao().findByCategoryId(id), "Se actualizo correctamente la categoría"};
+            return res;
         }else{
             return null;
         }
@@ -51,7 +52,7 @@ public class Service {
     @POST
     @Path("/delete/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public boolean deleteCategory(@PathParam("id") int id) {
+    public String deleteCategory(@PathParam("id") int id) {
         return new CategoryDao().deleteCategory(id);
     }
 

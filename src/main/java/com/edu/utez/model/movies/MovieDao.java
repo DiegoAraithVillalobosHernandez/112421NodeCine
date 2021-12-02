@@ -12,11 +12,11 @@ public class MovieDao {
     ResultSet rs;
     Statement stm;
     String query;
+    String message;
 
     public List<Movie> findAll() {
         List<Movie> listMovies = new ArrayList();
         try {
-
             con = ConnectionMySQL.getConnection();
             query = "SELECT * FROM movies;";
             stm = con.createStatement();
@@ -62,7 +62,6 @@ public class MovieDao {
                 movie.setUpdated_date(rs.getString("updated_date"));
                 movie.setState(rs.getInt("state"));
                 movie.setCategory(rs.getInt("category"));
-                System.out.println("aaaaaaaaaa");
             }
         } catch (SQLException | NullPointerException e) {
             e.printStackTrace();
@@ -72,8 +71,9 @@ public class MovieDao {
         return movie;
     }
 
-    public Movie findLast() {
+    public Object findLast() {
         Movie movie = new Movie();
+        message = "Se registro correctamente la película";
         try {
             con = ConnectionMySQL.getConnection();
             query = "SELECT c.* FROM movies c WHERE id = (SELECT MAX(id) FROM movies);";
@@ -95,7 +95,8 @@ public class MovieDao {
         } finally {
             closeConnections();
         }
-        return movie;
+        Object res = new Object[]{movie, message};
+        return res;
     }
 
     public boolean saveMovie(Movie movie, boolean isCreated) {
@@ -135,20 +136,24 @@ public class MovieDao {
         return state;
     }
 
-    public boolean deleteMovie(int id) {
-        boolean state = false;
+    public String deleteMovie(int id) {
         try {
             con = ConnectionMySQL.getConnection();
             query = "UPDATE movies SET state = 0 WHERE id = ?;";
             pstm = con.prepareStatement(query);
             pstm.setInt(1, id);
-            state = pstm.executeUpdate() == 1;
+            if (pstm.executeUpdate() == 1){
+                message = "Película deshabilitada correctamente";
+            }else{
+                message = "Hubo un error con los datos al eliminar";
+            }
         } catch (SQLException e) {
             e.printStackTrace();
+            message = "Hubo un error al intentar acceder a la base de datos";
         } finally {
             closeConnections();
         }
-        return state;
+        return message;
     }
 
     public void closeConnections() {

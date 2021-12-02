@@ -15,6 +15,7 @@ public class CategoryDao {
         ResultSet rs;
         Statement stm;
         String query;
+        String message;
 
         public List<Category> findAll() {
             List<Category> listCategorys = new ArrayList();
@@ -35,6 +36,7 @@ public class CategoryDao {
             } finally {
                 closeConnections();
             }
+
             return listCategorys;
         }
 
@@ -59,8 +61,9 @@ public class CategoryDao {
             return category;
         }
 
-        public Category findLast() {
+        public Object findLast() {
             Category category = new Category();
+            message = "Se registro correctamente la categoría";
             try {
                 con = ConnectionMySQL.getConnection();
                 query = "SELECT c.* FROM categorys c WHERE id = (SELECT MAX(id) FROM categorys);";
@@ -75,7 +78,8 @@ public class CategoryDao {
             } finally {
                 closeConnections();
             }
-            return category;
+            Object res = new Object[]{category, message};
+            return res;
         }
 
         public boolean saveCategory(Category category, boolean isCreated) {
@@ -87,7 +91,6 @@ public class CategoryDao {
                     pstm = con.prepareStatement(query);
                     pstm.setString(1, category.getName());
                     state = pstm.executeUpdate() == 1;
-
                 } else {
                     query = "UPDATE categorys SET name = ? WHERE id = ?";
                     pstm = con.prepareStatement(query);
@@ -101,23 +104,28 @@ public class CategoryDao {
             } finally {
                 closeConnections();
             }
+
             return state;
         }
 
-        public boolean deleteCategory(int id) {
-            boolean state = false;
+        public String deleteCategory(int id) {
             try {
                 con = ConnectionMySQL.getConnection();
                 query = "DELETE FROM categorys WHERE id = ?;";
                 pstm = con.prepareStatement(query);
                 pstm.setInt(1, id);
-                state = pstm.executeUpdate() == 1;
+                if (pstm.executeUpdate() == 1){
+                    message = "Categoría eliminada correctamente";
+                }else{
+                    message = "Hubo un error con los datos al eliminar";
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
+                message = "Hubo un error al intentar acceder a la base de datos";
             } finally {
                 closeConnections();
             }
-            return state;
+            return message;
         }
 
         public void closeConnections() {
