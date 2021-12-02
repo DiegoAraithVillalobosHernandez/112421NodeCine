@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="_120121JavaRestCinemaClient:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>_120121JavaRestCinemaClient</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="_120121JavaRestCinemaClient-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="_120121JavaRestCinemaClient:war exploded" />
+    </root>
+  </artifact>
+</component>
